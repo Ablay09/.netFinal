@@ -1,0 +1,90 @@
+﻿<h1>Arenda Page</h1>
+<h3 *ngIf="arendaIdToUpdate != -1; else create">
+    Put data for arenda: {{ employeeIdToUpdate }}
+</h3>
+<ng-template #create>
+    <h3>Create New Arenda</h3>
+</ng-template>
+<div>
+    <form [formGroup]="arendaForm" (ngSubmit)="onArendaFormSubmit()">
+        <table class="table">
+            <tr>
+                <td>Select Raion</td>
+                <td>
+                    <select formControlName="raionId">
+                        <option *ngFor="let raion of raionList" [ngValue]="raion.id">{{ raion.description }}</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Renting start date</td>
+                <td>
+                    <input type="date" formControlName="start">
+                    <label *ngIf="arendaForm.get('start').invalid && processValidation" [ngClass]="'error'"> Start Date is required. </label>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Renting End Date</td>
+                <td>
+                    <input type="date" formControlName="finish">
+                    <label *ngIf="arendaForm.get('finish').invalid && processValidation" [ngClass]="'error'"> End Date is required. </label>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <button *ngIf="arendaIdToUpdate == -1">CREATE</button>
+                    <button *ngIf="arendaIdToUpdate != -1">UPDATE</button>
+                    <button (click)="backToCreateArenda()" *ngIf="arendaIdToUpdate != -1">Go Back</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br />
+    <div *ngIf="statusCode">
+        <!--else processing-->
+        <div *ngIf="statusCode === 201" [ngClass]="'success'">
+            Arenda added successfully.
+        </div>
+        <div *ngIf="statusCode === 409" [ngClass]="'success'">
+            Arenda already exists.
+        </div>
+        <div *ngIf="statusCode === 200" [ngClass]="'success'">
+            Arenda updated successfully.
+        </div>
+        <div *ngIf="statusCode === 204" [ngClass]="'success'">
+            Arenda deleted successfully.
+        </div>
+        <div *ngIf="statusCode === 500" [ngClass]="'error'">
+            Internal Server Error.
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!arendaList"><em>Loading...</em></p>
+
+<h3>Arenda List</h3>
+<table class='table' *ngIf="arendaList">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Raion</th>
+            <th>Start date</th>
+            <th>Finish date</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of arendaList">
+            <td>{{ item.id }}</td>
+            <td>{{ item.raion.description }}</td>
+            <td>{{ item.start }}</td>
+            <td>{{ item.finish }}</td>
+            <td><button type="button" (click)="loadArendaToEdit(item.id)">Edit</button></td>
+            <td><button type="button" (click)="deleteArenda(item.id)">Delete</button></td>
+        </tr>
+    </tbody>
+</table>

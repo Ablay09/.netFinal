@@ -1,0 +1,89 @@
+﻿<h1>Report Page</h1>
+<h3 *ngIf="reportIdToUpdate != -1; else create">
+    Update Report for Id: {{ employeeIdToUpdate }}
+</h3>
+<ng-template #create>
+    <h3>Create New Report</h3>
+</ng-template>
+<div>
+    <form [formGroup]="reportForm" (ngSubmit)="onReportFormSubmit()">
+        <table class="table">
+            <tr>
+                <td>Select Kvartira</td>
+                <td>
+                    <select formControlName="kvartiraId">
+                        <option *ngFor="let kvartira of kvartiraList" [ngValue]="kvartira.id">{{ kvartira.address }}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Select ArendaId</td>
+                <td>
+                    <select formControlName="arendaId">
+                        <option *ngFor="let arenda of arendaList" [ngValue]="arenda.id">{{ arenda.id }}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Select Raion description</td>
+                <td>
+                    <select formControlName="raionId">
+                        <option *ngFor="let arenda of raionList" [ngValue]="raion.id">{{ raion.nalog }}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button *ngIf="reportIdToUpdate == -1">CREATE</button>
+                    <button *ngIf="reportIdToUpdate != -1">UPDATE</button>
+                    <button (click)="backToCreateReport()" *ngIf="reportIdToUpdate != -1">Go Back</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br />
+    <div *ngIf="statusCode">
+        <!--else processing-->
+        <div *ngIf="statusCode === 201" [ngClass]="'success'">
+            Report added successfully.
+        </div>
+        <div *ngIf="statusCode === 409" [ngClass]="'success'">
+            Report already exists.
+        </div>
+        <div *ngIf="statusCode === 200" [ngClass]="'success'">
+            Report updated successfully.
+        </div>
+        <div *ngIf="statusCode === 204" [ngClass]="'success'">
+            Report deleted successfully.
+        </div>
+        <div *ngIf="statusCode === 500" [ngClass]="'error'">
+            Internal Server Error.
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!reportList"><em>Loading...</em></p>
+
+<h3>Report List</h3>
+<table class='table' *ngIf="reportList">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Kvartira</th>
+            <th>Raion</th>
+            <th>Arenda</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of reportList">
+            <td>{{ item.id }}</td>
+            <td>{{ item.kvartira.address }}</td>
+            <td>{{ item.raion.nalog }}</td>
+            <td>{{ item.arenda.id }}</td>
+            <td><button type="button" (click)="loadReportToEdit(item.id)">Edit</button></td>
+            <td><button type="button" (click)="deleteReport(item.id)">Delete</button></td>
+        </tr>
+    </tbody>
+</table>

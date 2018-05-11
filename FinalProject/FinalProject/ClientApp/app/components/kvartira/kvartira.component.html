@@ -1,0 +1,89 @@
+﻿<h1>Kvartira Page</h1>
+<h3 *ngIf="employeeIdToUpdate != -1; else create">
+    Type data for kvartira: {{ employeeIdToUpdate }}
+</h3>
+<ng-template #create>
+    <h3>Create New Kvartira </h3>
+</ng-template>
+<div>
+    <form [formGroup]="kvartiraForm" (ngSubmit)="onKvartiraFormSubmit()">
+        <table class="table">
+            <tr>
+                <td>Enter Address</td>
+                <td>
+                    <input formControlName="address">
+                    <label *ngIf="kvartiraForm.get('address').invalid && processValidation" [ngClass]="'error'">Address is required. </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Enter Price</td>
+                <td>
+                    <input formControlName="price">
+                    <label *ngIf="kvartiraForm.get('price').invalid && processValidation" [ngClass]="'error'">Price is required. </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Select Raion</td>
+                <td>
+                     <select formControlName="raionId">
+                        <option *ngFor="let raion of raionList" [ngValue]="raion.id">{{ raion.description }}</option>
+                    </select>  
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <button *ngIf="kvartiraIdToUpdate == -1">CREATE</button>
+                    <button *ngIf="kvartiraIdToUpdate != -1">UPDATE</button>
+                    <button (click)="backToCreateKvartira()" *ngIf="kvartiraIdToUpdate != -1">Go Back</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br />
+    <div *ngIf="statusCode">
+        <!--else processing-->
+        <div *ngIf="statusCode === 201" [ngClass]="'success'">
+            Kvartira added successfully.
+        </div>
+        <div *ngIf="statusCode === 409" [ngClass]="'success'">
+            Kvartira already exists.
+        </div>
+        <div *ngIf="statusCode === 200" [ngClass]="'success'">
+            Kvartira updated successfully.
+        </div>
+        <div *ngIf="statusCode === 204" [ngClass]="'success'">
+            Kvartira deleted successfully.
+        </div>
+        <div *ngIf="statusCode === 500" [ngClass]="'error'">
+            Internal Server Error.
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!kvartiraList"><em>Loading...</em></p>
+
+<h3>Kvartira List</h3>
+<table class='table' *ngIf="kvartiraList">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Address</th>
+            <th>Price</th>
+            <th>Raion</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of kvartiraList">
+            <td>{{ item.id }}</td>
+            <td>{{ item.address }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.raion.description }}</td>
+            <td><button type="button" (click)="loadKvartiraToEdit(item.id)">Update with nalog</button> </td>
+            <td><button type="button" (click)="deleteKvartira(item.id)">Delete</button></td>
+            
+        </tr>
+    </tbody>
+</table>

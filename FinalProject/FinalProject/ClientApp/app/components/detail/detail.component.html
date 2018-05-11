@@ -1,0 +1,79 @@
+﻿<h1>Detail Page</h1>
+<h3 *ngIf="detailIdToUpdate != -1; else create">
+    Update Detail for Id: {{ employeeIdToUpdate }}
+</h3>
+<ng-template #create>
+    <h3>Create New Detail</h3>
+</ng-template>
+<div>
+    <form [formGroup]="detailForm" (ngSubmit)="onDetailFormSubmit()">
+        <table class="table">
+            <tr>
+                <td>Select Kvartira</td>
+                <td>
+                    <select formControlName="kvartiraId">
+                        <option *ngFor="let kvartira of kvartiraList" [ngValue]="kvartira.id">{{ kvartira.address }}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Select ArendaId</td>
+                <td>
+                    <select formControlName="arendaId">
+                        <option *ngFor="let arenda of arendaList" [ngValue]="arenda.id">{{ arenda.id }}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button *ngIf="detailIdToUpdate == -1">CREATE</button>
+                    <button *ngIf="detailIdToUpdate != -1">UPDATE</button>
+                    <button (click)="backToCreateDetail()" *ngIf="detailIdToUpdate != -1">Go Back</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br />
+    <div *ngIf="statusCode">
+        <!--else processing-->
+        <div *ngIf="statusCode === 201" [ngClass]="'success'">
+            Detail added successfully.
+        </div>
+        <div *ngIf="statusCode === 409" [ngClass]="'success'">
+            Detail already exists.
+        </div>
+        <div *ngIf="statusCode === 200" [ngClass]="'success'">
+            Detail updated successfully.
+        </div>
+        <div *ngIf="statusCode === 204" [ngClass]="'success'">
+            Detail deleted successfully.
+        </div>
+        <div *ngIf="statusCode === 500" [ngClass]="'error'">
+            Internal Server Error.
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!detailList"><em>Loading...</em></p>
+
+<h3>Detail List</h3>
+<table class='table' *ngIf="detailList">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Kvartira</th>
+            <th>Raion</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of detailList">
+            <td>{{ item.id }}</td>
+            <td>{{ item.kvartira.address }}</td>
+            <td>{{ item.arenda.id }}</td>
+            <td><button type="button" (click)="loadDetailToEdit(item.id)">Edit</button></td>
+            <td><button type="button" (click)="deleteDetail(item.id)">Delete</button></td>
+        </tr>
+    </tbody>
+</table>

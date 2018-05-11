@@ -1,0 +1,78 @@
+﻿
+<h1>Raion Page</h1>
+<h3 *ngIf="employeeIdToUpdate != -1; else create">
+    Fill the data for raion: {{ employeeIdToUpdate }}
+</h3>
+<ng-template #create>
+    <h3>Create New Raion </h3>
+</ng-template>
+<div>
+    <form [formGroup]="raionForm" (ngSubmit)="onRaionFormSubmit()">
+        <table class="table">
+            <tr>
+                <td>Enter Description</td>
+                <td>
+                    <input formControlName="description">
+                    <label *ngIf="raionForm.get('description').invalid && processValidation" [ngClass]="'error'">Description is required. </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Enter Nalog</td>
+                <td>
+                    <input formControlName="nalog">
+                    <label *ngIf="raionForm.get('nalog').invalid && processValidation" [ngClass]="'error'">Nalog is required. </label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button *ngIf="raionIdToUpdate == -1">CREATE</button>
+                    <button *ngIf="raionIdToUpdate != -1">UPDATE</button>
+                    <button (click)="backToCreateRaion()" *ngIf="raionIdToUpdate != -1">Go Back</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br />
+    <div *ngIf="statusCode">
+        <!--else processing-->
+        <div *ngIf="statusCode === 201" [ngClass]="'success'">
+            Raion added successfully.
+        </div>
+        <div *ngIf="statusCode === 409" [ngClass]="'success'">
+            Raion already exists.
+        </div>
+        <div *ngIf="statusCode === 200" [ngClass]="'success'">
+            Raion updated successfully.
+        </div>
+        <div *ngIf="statusCode === 204" [ngClass]="'success'">
+            Raion deleted successfully.
+        </div>
+        <div *ngIf="statusCode === 500" [ngClass]="'error'">
+            Internal Server Error.
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!raionList"><em>Loading...</em></p>
+
+<h3>Raion List</h3>
+<table class='table' *ngIf="raionList">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Description</th>
+            <th>Nalog</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of raionList">
+            <td>{{ item.id }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.nalog }}</td>
+            <td><button type="button" (click)="loadRaionToEdit(item.id)">Edit</button></td>
+            <td><button type="button" (click)="deleteRaion(item.id)">Delete</button></td>
+        </tr>
+    </tbody>
+</table>
